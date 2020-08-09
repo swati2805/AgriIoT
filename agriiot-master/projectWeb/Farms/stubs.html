@@ -1,0 +1,110 @@
+<html>
+    <head>
+        <title>Farm Stubs</title>
+        <script type='text/javascript' src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <style>
+            .stub{
+                display: inline-block;
+                width: 260;
+                height: 385;
+                border:none;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="stubs"></div>
+        <script>
+        
+            var presets ={
+                'Temperature' : {
+                    stub:"guage",
+                    "thingAppend":"F",
+                    "thingLabel":"Temperature",
+                    "thingMin":60,
+                    "thingMax":100
+                },
+                'Soil Fertility' : {
+                    stub:"guage",
+                    "thingAppend":"pH",
+                    "thingLabel":"Soil\nFertility",
+                    "thingMin":0,
+                    "thingMax":14
+                }
+            }
+
+            var thingStubs = [
+                /*
+                {
+                    stub:"guage",
+                    "thingId":"T5677",
+                    "thingAppend":"F",
+                    "thingLabel":"Temperature",
+                    "thingMin":60,
+                    "thingMax":100
+                },
+                {
+                    stub:"guage",
+                    "thingId":"T5678",
+                    "thingAppend":"pH",
+                    "thingLabel":"Soil\nFertility",
+                    "thingMin":0,
+                    "thingMax":14
+                },
+                {
+                    stub:"guage",
+                    "thingId":"T5679",
+                    "thingAppend":"F",
+                    "thingLabel":"Temperature",
+                    "thingMin":60,
+                    "thingMax":10
+                },
+                {
+                    stub:"guage",
+                    "thingId":"T5680",
+                    "thingAppend":"%",
+                    "thingLabel":"Soil\nMoisture",
+                    "thingMin":10,
+                    "thingMax":45
+                }
+                */
+            ];
+            
+            var farmId = localStorage.getItem('farmId');
+
+                $.get('/thing/list?farmId='+farmId,function(data1){
+                    console.log(data1);
+
+                    var thinglist = data1.thinglist;
+
+                    thinglist.forEach(function(thing){
+                        if(thing.thingType.thingMainType === 'Sensor'){
+                            var preS = JSON.parse(JSON.stringify(presets[thing.thingType.thingSubType]));
+                            preS.thingId = thing.thingId;
+                            preS.thingName = thing.thingName;
+                            preS.thingDeviceId = thing.DEVICE_ID;
+                            thingStubs.push(preS);
+                        }
+                        
+                    });
+                        for(var i=0;i<thingStubs.length;i++){
+                            loadStub(thingStubs[i]);
+                        }
+                });
+
+            
+            
+            function loadStub(stubInfo){
+                var str = [];
+                
+                var keys = Object.keys(stubInfo);
+                
+                for(var i=0;i<keys.length;i++){
+                    str.push(keys[i]+"="+stubInfo[keys[i]]);
+                }
+                
+                $("#stubs").append("<iframe class='stub guage' src='../Stubs/guage.html?"+str.join("&")+"' border='0'></iframe>");
+            }
+            
+        </script>
+    </body>
+</html>

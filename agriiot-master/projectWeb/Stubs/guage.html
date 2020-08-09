@@ -1,0 +1,179 @@
+<html>
+    <head>
+        <style>
+            .GaugeMeter{
+                Position: Relative;
+                Text-Align: Center;
+                Overflow: Hidden;
+                Cursor: Default;
+                color:white;
+            }
+
+            .GaugeMeter SPAN,
+            .GaugeMeter B{
+                Margin:	0 23%;
+                Width: 54%;
+                Position: Absolute;
+                Text-Align: Center;
+                Display: Inline-Block;
+                Color: white;
+                Font-Weight: 100;
+                Font-Family: "Open Sans", Arial;
+                Overflow: Hidden;
+                White-Space: NoWrap;
+                Text-Overflow: Ellipsis;
+            }
+            .GaugeMeter[data-style="Semi"] B{
+                Margin: 0 10%;
+                Width: 80%;
+            }
+
+            .GaugeMeter S,
+            .GaugeMeter U{
+                Text-Decoration:None;
+                Font-Size: .30em;
+                Font-Weight: 200;
+                Opacity: .6;
+            }
+
+            .GaugeMeter B{
+                Color: white!important;
+                Font-Weight: 200;
+                Font-Size: 0.85em;
+                Opacity: .8;
+            }
+
+            BODY{
+                Margin: 0;
+                Padding: 0;
+                Width: 100%;
+            }
+
+            #Header {
+                Height: 325px;
+                width: 200px;
+                padding: 20px;
+            }
+
+            HEADER{
+                Width: 100%;
+                z-Index: 1;
+                Top: 0;
+                Margin: 0;
+                Padding: 10px 0 0 0;
+                Text-Align: Center;
+                Background: #21B4F9;
+                margin:10px;
+                Box-Shadow: 0 0 10px 0 rgba(0,0,0,.4);
+                -Moz-Animation: BluePrint 60s Infinite;
+                -Webkit-Animation: BluePrint 60s Infinite;
+                Animation: BluePrint 60s Infinite;
+            }
+
+            HEADER .Preview{
+                Overflow: Auto;
+                Margin-Top: 30px;
+                Display: Inline-Block;
+            }
+
+            HEADER .Preview .GaugeMeter{
+                Margin: 0 10px;
+            }
+            
+            HEADER H1 {
+                Color: White;
+                Font: Normal 400 28px/28px "Helvetica", Arial;
+                Text-Shadow: 0 2px 10px rgba(0,0,0,.3);
+            }
+            
+            HEADER H4 {
+                Color: White;
+                Font: Normal 20px "Helvetica", Arial;
+                Text-Shadow: 0 2px 5px rgba(0,0,0,.3);
+                margin: 0;
+            }
+        </style>
+        <script type='text/javascript' src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js'></script>
+        <script type='text/javascript' src="../js/Customizable-Animated-jQuery-HTML5-Gauge-Meter-Plugin/GaugeMeter.js"></script>
+        <script src="../js/all.js"></script>
+        <script src="http://bl.ocks.org/telic/raw/9376360/297a3bdec9c2aec3b0791fa59248f1181fe6f062/SmoothRandom.js"></script>
+    </head>
+    <body>
+        <header id="Header">
+            <h1>Thing T1234</h1>
+            <div class="GaugeMeter" id="PreviewGaugeMeter" data-bind="gaugeValue: Percent" data-append="F" data-size=200 data-theme="White" data-width=15 data-style="Arch" data-label="Temperature" data-animationstep="0" data-color="#FFFFFF"></div>
+            <h4>last updated <i id="ts">a minute ago</i></h4>
+        </header>
+        <script src="../../socket.io/socket.io.js"></script>
+        <script>
+            
+            var thingId = GetURLParameter('thingId') || "1234";
+            var thingAppend = GetURLParameter('thingAppend') || "F";
+            var thingLabel = GetURLParameter('thingLabel') || "Temperature";
+            var thingMin = GetURLParameter('thingMin') || 60;
+            thingMin = parseInt(thingMin);
+            var thingMax = GetURLParameter('thingMax') || 100;
+            thingMax = parseInt(thingMax);
+            
+            $("h1").html(decodeURI(GetURLParameter('thingName')));
+            
+            $("#PreviewGaugeMeter").attr("data-append",thingAppend);
+            $("#PreviewGaugeMeter").attr("data-label",thingLabel);
+            $("#PreviewGaugeMeter").attr("data-percent",thingMin);
+            
+            $(".GaugeMeter").gaugeMeter();
+            
+            console.log(thingId);
+            loadSocketData();
+            
+            var prevVal = thingMin;
+            var prevTs = new Date().getTime();
+            
+            setInterval(function(){
+                $("#ts").html(convertSecondstoTime(
+                    (new Date().getTime() - prevTs)/1000
+                )+" ago");
+            },1000);
+            
+            function convertSecondstoTime(given_seconds) { 
+
+                dateObj = new Date(given_seconds * 1000); 
+                hours = dateObj.getUTCHours(); 
+                minutes = dateObj.getUTCMinutes(); 
+                seconds = dateObj.getSeconds(); 
+
+                timeString = hours.toString().padStart(2, '0') 
+                    + ':' + minutes.toString().padStart(2, '0') 
+                    + ':' + seconds.toString().padStart(2, '0'); 
+
+                return timeString; 
+            } 
+            
+            function loadRandomData(){
+                setInterval(function(){
+                    prevVal += Math.floor(Math.random() * 10)-5;
+                    presentData(prevVal);
+                },4000);
+            }
+            
+            function presentData(pval){
+                pval = parseInt(pval);
+                $("#PreviewGaugeMeter").data("percent", pval);
+                $("#PreviewGaugeMeter").gaugeMeter();
+                console.log(pval);
+                prevTs = new Date().getTime();
+            }
+            
+            function loadSocketData(){
+                var socket = io();
+                socket.on(GetURLParameter('thingDeviceId'), function(msg){
+                    console.log(msg);
+                    presentData(msg["temperature"]);
+                });
+            }
+            
+            
+        </script>
+    </body>
+</html>

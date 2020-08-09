@@ -1,0 +1,20 @@
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+   </head>
+   <body>
+       
+       <script src="../js/all.js"></script>
+        <script>
+            $.get("/user/logout",function(data){
+                    if(data.success){
+                        sendMsgToParent({userState:'changed'});
+                        window.location = "../Login/index.html";
+                        
+                    }else{
+                        alert("Please try again.");
+                    }
+                });
+        </script>
+   </body>
+</html>

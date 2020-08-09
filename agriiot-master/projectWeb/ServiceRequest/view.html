@@ -1,0 +1,326 @@
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Cinzel|Play&display=swap" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <link href="../css/form.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+      <style>
+         body{background-image:url(https://drive.google.com/uc?export=download&id=19AfvU5NCtSvDros49Jx8V4SyJeJ0_mi-);
+             background-size:cover;
+             background-position:center;
+          }
+          .formEle input,.formEle select{
+              width:200px;
+              display: inline-block;
+          }
+          .formDiv table{
+              width: 100%;
+              margin: 10px 0px;
+          }
+          .hide{
+              display:none;
+          }
+      </style>
+   </head>
+   <body>
+       
+              
+      <table style="height:100%;width:100%;">
+         <tbody>
+            <tr>
+               <td valign="middle">
+                  <div class="formDiv" style="margin-left: 100px;">
+                    <h2 class="heading" style="
+                                margin: 0;
+                                text-align: center;
+                                display: block;
+                            ">Service Request</h2>
+                      <form action="#" method="POST" onsubmit="event.preventDefault(); validateMyForm();">
+                            <table border='1'>
+                                <tr>
+                                    <th>Request Status</th>
+                                    <td id='requestStatus'></td>
+                                </tr>
+                            </table>
+                            <br>
+                            <table id='srDetails' border='1' class='hide'>
+                                
+                            </table>
+                            <br>
+                            <div id='srBillContract' class="hide">
+                                <table border="1"  >
+                                    <tr>
+                                        <th colspan="2">Bill</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Charge</th><td id='billC'>$0</td>
+                                    </tr>
+                                    <tr>    
+                                        <th>Pay-as-you-go<br>(per device per day)</th><td id='billPAYG'>$0</td>
+                                    </tr>  
+                                    <tr>    
+                                        <th>Service Tax</th><td id='billST'>$0</td>
+                                    </tr>  
+                                    <tr>    
+                                        <th>Current Total</th><td id='billT'>$0</td>
+                                    </tr>  
+                                </table>
+                            <br>
+                                <table border="1" >
+                                    <tr>
+                                        <th colspan="2">Contract</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Contract Start Time</th><td id='contractST'>00/00/0000</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Contract End Time</th><td id='contractET'>00/00/0000</td>
+                                    </tr>
+                                    <tr>    
+                                        <th>Contract Cost</th><td id='contractCost'>$0</td>
+                                    </tr>  
+                                </table>
+                            </div>
+                            <br>
+                            <div id='srPayment' class="hide">
+                                <table border="1" >
+                                    <tr>
+                                        <th colspan="2">Payment</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Payment Amount</th><td id='paymentA'>$0</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Payment Time</th><td id="paymentT">00/00/0000</td>
+                                    </tr>  
+                                </table>
+                            </div>
+                            <br><br>
+                            <div id='srButtons'></div>
+                            
+                        </form>
+                  </div>
+               </td>
+            </tr>
+         </tbody>
+      </table>
+       <script src="../js/all.js"></script>
+        <script>
+           
+           var srId = localStorage.getItem('srId');
+
+            var userRole = '';
+
+             var statusUserRoleMap =
+                {
+                    'raised':{
+                        'farmer':['Cancel Service Request'],
+                        'servicecarrierstaff':['Create Contract and Bill','Deny Service Request']
+                    },
+                    'estimated':{
+                        'farmer':['Accept and Pay Bill','Cancel Service Request'],
+                        'servicecarrierstaff':['Deny Service Request']
+                    },
+                    'approved':{
+                        'farmer':['Cancel Service Request'],
+                        'servicecarrierstaff':['Deny Service Request'],
+                        'machinecontroller':['Handle Request','Request Failed']
+                    },
+                    'handled':{
+                        'farmer':['View Things'],
+                        'servicecarrierstaff':['View Things'],
+                        'machinecontroller':['View Things']
+                    }
+                };
+
+            var serviceRequest ;
+
+
+            $.get("/whoami",function(data){
+                console.log(data);
+                if(data.user === true){
+                    userRole = data.userDetails.userRole;      
+                    $.get('/servicerequest/read?srId='+srId,function(data){
+                        console.log(data);
+
+                        if(data.success){
+                            serviceRequest = data.data;
+                            $('#requestStatus').html(serviceRequest.requestStatus);
+                            if(data.data.requestType === 'subscribe'){
+                                printSubscribeSR(data.data.requestDetails);
+                            }
+                            if(data.data.requestType === 'maintenance'){
+                                printMaintenanceSR(data.data.requestDetails);
+                            }
+                            $('#srDetails').removeClass('hide');
+                            printBillContractAndPayment();
+                            printButtons();
+                        }else{
+
+                        }
+                    });
+
+                }else{
+                    alert("Login First");
+                    window.location = "../../Login/index.html";
+
+                }
+            }).fail(function(err) {
+                console.log(err);
+            });
+
+           
+
+           function printSubscribeSR(requestDetails){
+               console.log(requestDetails);
+               var tableContents = "<thead><tr><th>Thing Main Type</th><th>Thing Sub Type</th><th>Thing Quantity</th></tr></thead><tbody>";
+               requestDetails.subscribe.forEach(function(subscription){
+                   tableContents += "<tr><td>"+subscription.thingType.thingMainType+"</td><td>"+subscription.thingType.thingSubType+"</td><td>"+subscription.quantity+"</td></tr>";
+               });
+               tableContents += "</tbody>";
+               $('#srDetails').html(tableContents);
+           }
+
+           function printMaintenanceSR(requestDetails){
+               console.log(requestDetails);
+               var tableContents = "<thead><tr><th>Thing Main Type</th><th>Thing Sub Type</th><th>Thing Id</th></tr></thead><tbody>";
+               requestDetails.maintenance.forEach(function(maintenanceO){
+                   tableContents += "<tr><td>"+maintenanceO.thingType.thingMainType+"</td><td>"+maintenanceO.thingType.thingSubType+"</td><td>"+maintenanceO.id+"</td></tr>";
+               });
+               tableContents += "</tbody>";
+               $('#srDetails').html(tableContents);
+           }
+            
+            function printBillContractAndPayment(){
+                console.log(serviceRequest);
+                if(serviceRequest.bill !== undefined){
+                    
+                    $("#contractST").html(
+                            new Date(serviceRequest.contract.startTime).toDateString()
+                        );
+
+                    $("#contractET").html(
+                            new Date(serviceRequest.contract.endTime).toDateString()
+                        );
+
+                    $('#contractCost').html("$"+serviceRequest.contract.cost);
+                    
+                    $('#billC').html("$"+serviceRequest.bill.charge);
+                    $('#billPAYG').html("$"+serviceRequest.bill.payAsYouGo);
+                    $('#billST').html("$"+serviceRequest.bill.serviceTax);
+                    $('#billT').html("$"+(parseFloat(serviceRequest.bill.serviceTax)+parseFloat(serviceRequest.bill.charge)));
+
+
+                            $('#srBillContract').removeClass('hide');
+
+                    if(serviceRequest.bill.paymentTime !== undefined){
+                        $("#paymentT").html(
+                            new Date(serviceRequest.bill.paymentTime).toDateString()
+                        );
+                        $('#paymentA').html("$"+(parseFloat(serviceRequest.bill.serviceTax)+parseFloat(serviceRequest.bill.charge)));
+                            $('#srPayment').removeClass('hide');
+                    }
+                }
+
+            }
+
+            function printButtons(){
+                try{
+                    statusUserRoleMap[serviceRequest.requestStatus][userRole].forEach(function(btnText){
+                        //<button name="submit" value="yes" id="submit_button" class='hide' >Create Service Request</button>
+                        $('#srButtons').append(
+                            "<button class='fullButton'>"+btnText+"</button><br><br>"
+                        );
+                    });
+
+                    $(".fullButton").click(function(){
+                        var action = $(this).html();
+                        performAction(action);
+                    });
+                }catch(e){
+
+                }
+            }
+
+            function performAction(operation){
+                if(operation == "Create Contract and Bill"){
+                    var w = 850;
+                    var h = 600;
+                    //alert(screen.width);
+                    var left = (screen.width/2)-(w/2);
+
+                    var top = (screen.height/2)-(h/2);
+                    var newwindow = window.open("../Billing/create.html","Create Bill",'toolbar=no, location=no, directories=no, status=no, menubar=no, resizable=no, copyhistory=no,height='+h+',width='+w+',top='+top+', left='+left);
+                    if (window.focus) {newwindow.focus();}
+                    var done = false;
+                    setInterval(function(){
+                        if(newwindow.closed && done == false){
+                            window.location.reload();
+                            done = true;
+                        }
+                    },100);
+                    
+                }else if(operation == "Accept and Pay Bill"){
+                        //updateSRState();
+                        $.get('/bill/pay?srId='+srId,function(data){
+                            if(data.success){
+                                window.location.reload();
+                            }else{
+
+                            }
+                        });
+                }else if(operation == "Handle Request"){
+                        //updateSRState();
+                        if(serviceRequest.requestType === 'subscribe'){
+                            var w = 850;
+                            var h = 600;
+                            //alert(screen.width);
+                            var left = (screen.width/2)-(w/2);
+
+                            var top = (screen.height/2)-(h/2);
+                            var newwindow = window.open("../Thing/create.html","Create Thing",'toolbar=no, location=no, directories=no, status=no, menubar=no, resizable=no, copyhistory=no,height='+h+',width='+w+',top='+top+', left='+left);
+                            if (window.focus) {newwindow.focus();}
+                            var done = false;
+                            setInterval(function(){
+                                if(newwindow.closed && done == false){
+                                    window.location.reload();
+                                    done = true;
+                                }
+                            },100);
+                        }else{
+
+                        }
+                }else if(operation == "View Things"){
+                    showStubs();
+                }else{
+                    $.get('/servicerequest/cancel?srId='+srId,function(data){
+                            if(data.success){
+                                window.location.reload();
+                            }else{
+
+                            }
+                        });
+                }
+            }
+
+            function showStubs(){
+              
+              popitup('../ServiceRequest/stubs.html','ServiceRequest Thing Stubs');
+            }
+
+            function popitup(url,windowName) {
+                var w = 850;
+                var h = 600;
+                //alert(screen.width);
+                var left = (screen.width/2)-(w/2);
+                
+                var top = (screen.height/2)-(h/2);
+              var newwindow = window.open(url,windowName,'toolbar=no, location=no, directories=no, status=no, menubar=no, resizable=no, copyhistory=no,height='+h+',width='+w+',top='+top+', left='+left);
+              if (window.focus) {newwindow.focus();}
+              return false;
+            }
+          
+
+        </script>
+   </body>
+</html>

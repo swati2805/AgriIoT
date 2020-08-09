@@ -1,0 +1,144 @@
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Cinzel|Play&display=swap" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <link href="../css/form.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+      <style>
+         body{background-image:url(https://cdn-img.health.com/sites/default/files/styles/medium_16_9/public/1516658245/agriculture-lungs-gettyImages-543212762.jpg?itok=S5rZATig&1516658555);background-size:cover;background-position:center;}
+         
+      </style>
+   </head>
+   <body>
+       
+              
+      <table style="height:100%;width:100%;">
+         <tbody>
+            <tr>
+               <td valign="middle">
+                  <div class="formDiv" >
+                    <h2 class="heading" style="
+                                            margin: 0;
+                                            text-align: center;
+                                            display: block;
+                                        ">Bill Creation</h2>
+                      <form id='myForm' action="#" method="POST" onsubmit="event.preventDefault(); validateMyForm();">
+                            <table border='1'>
+                                <thead>
+                                    <tr>
+                                        <th>ORG</th>
+                                        <th>DEVICE_TYPE</th>
+                                        <th>DEVICE_ID</th>
+                                        <th>TOKEN</th>
+                                        <th>Thing Name</th>
+                                        <th>Thing Main Type</th>
+                                        <th>Thing Sub Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody id='formElements'></tbody>
+                            </table>
+                            <button name="submit" value="yes" id="submit_button">Create Devices</button><br><br>
+                        </form>
+                  </div>
+               </td>
+            </tr>
+         </tbody>
+      </table>
+       <script src="../js/all.js"></script>
+        <script>
+            var srId = localStorage.getItem('srId');
+
+            var userRole = '';
+            var serviceRequest ;
+
+            $.get("/whoami",function(data){
+                console.log(data);
+                if(data.user === true){
+                    userRole = data.userDetails.userRole;      
+                    $.get('/servicerequest/read?srId='+srId,function(data){
+                        console.log(data);
+
+                        if(data.success){
+                            serviceRequest = data.data;
+                            if(data.data.requestType === 'subscribe'){
+                                printSubscribeSR(data.data.requestDetails);
+                            }
+                        }else{
+
+                        }
+                    });
+
+                }else{
+                    alert("Login First");
+                    window.location = "../../Login/index.html";
+
+                }
+            }).fail(function(err) {
+                console.log(err);
+            });
+
+            function printSubscribeSR(requestDetails){
+               console.log(requestDetails);
+               var tableContents = "";
+               requestDetails.subscribe.forEach(function(subscription){
+                   for(var i =0;i<subscription.quantity;i++){
+                       tableContents += "<tr>"
+                        +"<td><input class='ORG' placeholder='ORG' value='1j0vu8'></td>"
+                        +"<td><input class='DEVICE_TYPE' placeholder='DEVICE_TYPE' value='Generic'></td>"
+                        +"<td><input class='DEVICE_ID' placeholder='DEVICE_ID'></td>"
+                        +"<td><input class='TOKEN' placeholder='TOKEN' value='Mrox5497' type='password'></td>"
+                        +"<td><input class='thingName' placeholder='Thing Name' value='' ></td>"
+                        +"<td><input class='tmt' readonly value='"+subscription.thingType.thingMainType+"'></td>"
+                        +"<td><input class='tst' readonly value='"+subscription.thingType.thingSubType+"'></td>"
+                        +"</tr>";
+                   }
+               });
+               tableContents += "";//
+               $('#formElements').html(tableContents);
+           }
+
+            $("#submit_button").click(function(link){
+                submitForm();
+            });
+
+            function submitForm(){
+                var inputs = document.getElementsByTagName('input');
+                var valsByClass = {};
+                for(var i = 0 ; i < inputs.length ; i++){
+                    var cls = inputs[i].getAttribute('class');
+                    var val = inputs[i].value;
+                    if(valsByClass[cls]){
+                        valsByClass[cls].push(val);
+                    }else{
+                        valsByClass[cls] = [val];
+                    }
+                }
+                console.log(valsByClass);
+                var formSubmit = [];
+                for(var i = 0 ; i < valsByClass['ORG'].length ; i++){
+                    formSubmit.push({
+                        ORG:valsByClass['ORG'][i],
+                        DEVICE_TYPE:valsByClass['DEVICE_TYPE'][i],
+                        DEVICE_ID:valsByClass['DEVICE_ID'][i],
+                        TOKEN:valsByClass['TOKEN'][i],
+                        thingName:valsByClass['thingName'][i],
+                        thingType:{
+                            thingMainType:valsByClass['tmt'][i],
+                            thingSubType:valsByClass['tst'][i]
+                        },
+                        thingRequestId:srId,
+                        thingStatus:'Active'
+                    });
+                }
+                console.log(formSubmit);
+                $.post("/thing/create",{thingList:formSubmit},function(data){
+                    if(data.success){
+                        window.close();
+                    }else{
+                        alert("Please try again.");
+                    }
+                });
+            }
+        </script>
+   </body>
+</html>

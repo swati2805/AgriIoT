@@ -1,0 +1,286 @@
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Cinzel|Play&display=swap" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <link href="../css/form.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+      <style>
+         body{background-image:url(https://cdn-img.health.com/sites/default/files/styles/medium_16_9/public/1516658245/agriculture-lungs-gettyImages-543212762.jpg?itok=S5rZATig&1516658555);background-size:cover;background-position:center;}
+         
+          .dp{
+              width: 200px;
+              height:200px;
+              object-fit: cover;
+              border-radius: 50%;
+          }
+          
+          .farmList{
+              font-size: 14pt;
+          }
+          
+          .farmList thead{
+              font-size: 14pt;
+          }
+          
+          .farmList thead tr:first-child{
+              //font-size: 18pt;
+              font-family: 'Cinzel', serif;
+          }
+          
+          .tab{
+              font-size: 18pt;
+              width:50%;
+              text-align: center;
+              border-bottom: 2px solid #555;
+          }
+          
+          .selected{
+              border-top: 2px solid #555;
+              border-left: 2px solid #555;
+              border-right: 2px solid #555;
+              
+              border-bottom: none;
+          }
+          
+          .tab:hover{
+              text-decoration: underline;
+          }
+          
+          .farmList tbody{
+              font-size: 14pt;
+          }
+          
+          .farmList th{
+              text-align: left;
+              white-space: nowrap;
+          }
+          
+          .farmList td,th{
+              padding:10px;
+          }
+          
+          .farmList tbody tr:hover{
+              text-decoration: underline;
+          }
+          
+          .farmList td:last-child{
+              max-width:200px;
+          }
+          
+          h2{
+              
+            color: #E5A635;
+            font-family: 'Cinzel', serif;
+            font-size: 20pt;
+
+          }
+          
+          
+          .fixed_header{
+                //width: 400px;
+                table-layout: fixed;
+                border-collapse: collapse;
+            }
+
+            .fixed_header tbody{
+              display:block;
+              width: 100%;
+              overflow: auto;
+              height: 150px;
+            }
+
+            .fixed_header thead tr {
+               display: block;
+            }
+
+            .fixed_header thead {
+                font-size:16pt;
+            }
+
+            .fixed_header th, .fixed_header td {
+              padding: 5px;
+              text-align: left;
+              width: 200px;
+            }
+          
+          .infoTb{
+              text-align: center;
+          }
+          
+          .infoTb td{
+              min-width: 100px;
+          }
+          
+      </style>
+   </head>
+   <body>
+       
+              
+      <table style="border-spacing:0;
+                    border-collapse: collapse;
+                    height:100%;
+                    width:100%;" cellspacing="0" cellpadding="0">
+         <tbody>
+            <tr>
+               <td align="center" valign="middle">
+                  <div class="formDiv">
+                      <h1 class="heading">Orscheln Farm &amp; Home</h1>
+                        
+                      <br>
+                      <div style="background-color: rgba(255,255,255,0.4);">
+                      <h2>Edge Station Information</h2>
+                        <table border="1" class="infoTb">
+                            <tr>
+                                <th rowspan="2">ID</th><th rowspan="2">Status</th><th colspan="4">Things</th>
+                            </tr>
+                            <tr><th>Connected</th><th>Active</th><th>Inactive</th><th>Maintenance</th>
+                            </tr>
+                            <tr>
+                                <td>123</td><td>Active</td><td>7</td><td>5</td><td>1</td><td>1</td>
+                            </tr>
+                        </table>
+                          <br>
+                    <table class="farmList" style="width:100%"
+                           cellpadding="0"
+                           cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center" class="tab selected">
+                                    Sensors
+                                </th>
+                                <th style="text-align:center" class="tab">
+                                    Actuators
+                                </th>
+                            </tr>
+                        </thead>
+                    </table>
+                      <table class="farmList fixed_header" style="
+            border-bottom: 2px solid #555;
+              border-left: 2px solid #555;
+              border-right: 2px solid #555;">
+                        <thead>
+                            <tr>
+                                <td><b>Thing Id</b></td>
+                                <td><b>Thing Name</b></td>
+                                <td><b>Thing Status</b></td>
+                                <td><b>Thing SubType</b></td>
+                            </tr>  
+                        </thead>
+                        <tbody id="thingsList">
+                          
+                            
+                            
+                        </tbody>  
+                        
+                      </table>
+                        </div>
+                  </div>
+               </td>
+            </tr>
+         </tbody>
+      </table>
+       <script src="../js/all.js"></script>
+      <script>
+          
+          var data={
+              "sensors":[
+                { 
+                    "thingId":"T5677",
+                    "thingName":"North Barn Fire Alert",
+                    "thingStatus":"Active",
+                    "thingSubType":"Fire Alert"
+                },
+                { 
+                    "thingId":"T5678",
+                    "thingName":"South Field Soil Moisture",
+                    "thingStatus":"Inactive",
+                    "thingSubType":"Soil Moisture"
+                },
+                { 
+                    "thingId":"T5679",
+                    "thingName":"North Barn Temperature Sensor",
+                    "thingStatus":"Active",
+                    "thingSubType":"Temperature"
+                },
+                { 
+                    "thingId":"T5680",
+                    "thingName":"South Field pH Sensor",
+                    "thingStatus":"Active",
+                    "thingSubType":"pH"
+                }  
+              ],
+              "actuators":[
+                { 
+                    "thingId":"T5578",
+                    "thingName":"South Field Water Dispenser",
+                    "thingStatus":"Active",
+                    "thingSubType":"Water Dispenser"
+                },
+                { 
+                    "thingId":"T5579",
+                    "thingName":"North Barn Temperature Control",
+                    "thingStatus":"Maintenance",
+                    "thingSubType":"Temperature Control"
+                },
+                { 
+                    "thingId":"T5580",
+                    "thingName":"South Field Fretilizer Dispenser",
+                    "thingStatus":"Active",
+                    "thingSubType":"Fretilizer Dispenser"
+                } 
+              ]
+          };
+          
+          function showThingType(thingType){
+              thingType = thingType.toLowerCase();
+              $("#thingsList").html("");
+              var html="";
+              
+              var things = data[thingType];
+              
+              for(var i=0;i<things.length;i++){
+                html += "<tr onclick='thingClicked(this)'>";
+                html += "<td>";
+                html += things[i]["thingId"];  
+                html += "</td>";
+                html += "<td>";
+                html += things[i]["thingName"];  
+                html += "</td>";
+                html += "<td>";
+                html += things[i]["thingStatus"];  
+                html += "</td>";
+                html += "<td>";
+                html += things[i]["thingSubType"];  
+                html += "</td>";
+                html += "</tr>";
+              }
+              
+              $("#thingsList").html(html);
+          }
+          
+          showThingType("sensors");
+          
+          $(".tab").click(function(link){
+              $(".selected").removeClass("selected");
+              $(link.target).addClass("selected");
+              showThingType(link.target.innerText);
+              console.log($(".selected").html().trim());
+          });
+          function thingClicked(thing){
+              console.log($(".selected").html().trim());
+              if($(".selected").html().trim() == "Sensors"){
+                  window.location = "../Thing/sensor.html";
+              }else
+                  window.location = "../Thing/actuator.html";
+          }
+          
+        sendMsgToParent(JSON.stringify(
+            {
+                "userId":"blahblahblah",
+                "userName":"Rishi",
+                "userRole":"Farmer"
+            }
+        ));
+        </script>
+   </body>
+</html>

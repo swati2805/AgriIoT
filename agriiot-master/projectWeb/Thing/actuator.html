@@ -1,0 +1,302 @@
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Cinzel|Play&display=swap" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <link href="../css/form.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+      <style>
+         body{background-image:url(https://cdn-img.health.com/sites/default/files/styles/medium_16_9/public/1516658245/agriculture-lungs-gettyImages-543212762.jpg?itok=S5rZATig&1516658555);background-size:cover;background-position:center;}
+         
+          
+          .thingData{
+              font-size: 14pt;
+          }
+          
+          .thingData thead{
+              font-size: 14pt;
+          }
+          
+          .thingData thead tr:first-child{
+              //font-size: 18pt;
+              font-family: 'Cinzel', serif;
+          }
+          
+          .tab{
+              font-size: 18pt;
+              width:50%;
+              text-align: center;
+              border-bottom: 2px solid #555;
+          }
+          
+          .selected{
+              border-top: 2px solid #555;
+              border-left: 2px solid #555;
+              border-right: 2px solid #555;
+              
+              border-bottom: none;
+          }
+          
+          .tab:hover{
+              text-decoration: underline;
+          }
+          
+          .thingData tbody{
+              font-size: 14pt;
+          }
+          
+          .thingData th{
+              text-align: left;
+              white-space: nowrap;
+          }
+          
+          .thingData td,th{
+              padding:10px;
+          }
+          
+          .thingData tbody tr:hover{
+              text-decoration: underline;
+          }
+          
+          .thingData td:last-child{
+              max-width:200px;
+          }
+          
+          h2{
+              
+            color: #E5A635;
+            font-family: 'Cinzel', serif;
+            font-size: 20pt;
+              margin:10px;
+          }
+          
+          
+          .fixed_header{
+                //width: 400px;
+                table-layout: fixed;
+                border-collapse: collapse;
+            }
+
+            .fixed_header tbody{
+              display:block;
+              width: 100%;
+              overflow: auto;
+              height: 300px;
+            }
+
+            .fixed_header thead tr {
+               display: block;
+            }
+
+            .fixed_header thead {
+                font-size:16pt;
+            }
+
+            .fixed_header th, .fixed_header td {
+              padding: 5px;
+              text-align: left;
+              width: 200px;
+            }
+          
+          .bottomborder{
+              //width:100%; 
+              border-bottom: 2px solid #555;
+              border-left: 2px solid #555;
+              border-right: 2px solid #555;
+          }
+          
+          .fw{
+              width:100%;
+          }
+          
+          input{
+              //width:50%
+          }
+          #submit_button{
+            
+              width: 65%;
+            font-size: 100%;
+            padding: 2%;
+          }
+      </style>
+   </head>
+   <body>
+       
+              
+      <table style="border-spacing:0;
+                    border-collapse: collapse;
+                    height:100%;
+                    width:100%;" cellspacing="0" cellpadding="0">
+         <tbody>
+            <tr>
+               <td align="center" valign="middle">
+                  <div class="formDiv">
+                      <h1 class="heading">Actuator Information</h1>
+                        
+                      <div style="background-color: rgba(255,255,255,0.4);">
+                      <h2 id='tnm'>North Barn Temperature Sensor</h2>
+                        <table style="text-align: left">
+                            <tr>
+                                <th>Thing ID</th>
+                                <td id='tid'>T5677</td>
+                            </tr>
+                            <tr>
+                                <th>Thing SubType</th>
+                                <td id='tsbty'>Temperature Sensor</td>
+                            </tr>
+                            <tr>
+                                <th>Thing Status</th>
+                                <td id='tst'>Active</td>
+                            </tr>
+                            <!--
+                            <tr>
+                                <th>Thing Location</th>
+                                <td><a href="#">Click Here To View Installed Location</a></td>
+                            </tr>
+                            -->  
+                        </table>
+                    <table class="thingData" style="width:100%"
+                           cellpadding="0"
+                           cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center" class="tab selected">
+                                    Operate
+                                </th>
+                                <th style="text-align:center" class="tab">
+                                    History
+                                </th>
+                            </tr>
+                        </thead>
+                    </table>
+                      
+                          <div id="sectionData" class="fw">
+                          </div>
+                          
+                        </div>
+                   </div>
+               </td>
+            </tr>
+         </tbody>
+      </table>
+       <div id="Operate" style="display:none">
+        <table class="bottomborder" style="width:100%;">
+            <tbody >
+            <tr>
+                <th >Value</th>
+                <td ><input id="value" type='number'> </td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center"><button id="submit_button">Command Operation</button></td>
+            </tr>
+            </tbody>
+        </table>
+       
+       </div>
+       
+        <div id="History" style="display: none;">
+            <table class="thingData fixed_header bottomborder" >
+                        <thead id="tableHeaders">
+                            <tr>
+                                <td><b>Thing Id</b></td>
+                                <td><b>Timestamp</b></td>
+                                <td ><b>Value</b></td>
+                            </tr>  
+                        </thead>
+                        <tbody id="packetList">
+                          
+                            
+                            
+                        </tbody>  
+                        
+                      </table>
+                          
+       </div>
+       
+       <script src="../js/all.js"></script>
+     <script>
+         var prevData =[];
+        var thingId = localStorage.getItem('thingId');
+
+            var thing ;
+            $.get('/thing/read?thingId='+thingId,function(data){
+                if(data.success){
+                    thing = data.data;
+                    $('#tnm').html(thing.thingName);
+                    $('#tid').html(thing.thingId);
+                    $('#tsbty').html(thing.thingType.thingSubType);
+                    $('#tst').html(thing.thingStatus);
+                }
+            });
+
+         var OperateHTML = $("#Operate").html();
+         $("#Operate").html("");
+         
+         var HistoryHTML = $("#History").html();
+         $("#History").html("");
+         
+         $("#sectionData").html(OperateHTML);
+         
+          
+         var i = 0;
+         
+         $("#submit_button").click(function(){
+             
+             var value = $("#value").val() ;
+             
+             $.post('/thing/command',{'value':value,'DEVICE_ID':thing.DEVICE_ID},function(data){
+            var json = {
+                 "thingId":thingId,
+                 "timestamp":new Date().getTime(),
+                "value":value
+             }
+             prevData.push(json);
+             alert("Command Sent Successfully");
+             });
+         });
+         
+          
+            function randomValue(n){
+                return (Math.random()*100000)%n;
+            }  
+          
+          function prependData(json){
+              var html="";
+                  html += "<tr>";
+                  html += "<td>";
+                  html += json["thingId"];  
+                  html += "</td>";
+                  html += "<td>";
+                  html += json["timestamp"];  
+                  html += "</td>";
+                  html += "<td>";
+                  html += json["value"];  
+                  html += "</td>";
+                  html += "</tr>";
+              $("#packetList").prepend(html);
+          }
+          
+          $(".tab").click(function(link){
+              $(".selected").removeClass("selected");
+              $(link.target).addClass("selected");
+              $("#packetList").html("");
+              if($(".selected").html().trim() == "History"){
+                  $("#tableHeaders td").css({"opacity":100});
+                  $(".collapse").show();
+                  $("#sectionData").removeClass("fw");
+                  $("#sectionData").html(HistoryHTML);
+                  for(var i=0;i<prevData.length;i++){
+                      prependData(prevData[i]);
+                  }
+              }else{
+                  $("#tableHeaders td").css({"opacity":0});
+                  $(".collapse").hide();
+                  $("#sectionData").html(OperateHTML);
+                  $("#sectionData").addClass("fw");
+              }
+          });
+          
+          
+          
+        </script>
+   </body>
+</html>

@@ -1,0 +1,106 @@
+<html>
+<head>
+<title>AgriIoT</title>
+<link href="https://fonts.googleapis.com/css?family=Cinzel|Play&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<link href="css/main.css" rel="stylesheet">
+<style>
+body{
+margin:0;
+background: url(http://www.sjsu.edu/sjsuhome/assets/images/bg-pattern-sjsu-02.png) top right no-repeat #e6e6e0;
+}
+</style>
+</head>
+<body>
+
+<table class="hf centerPiece" border="0" cellpadding="0" cellspacing="0">
+	<tr class="h1">
+    	<td rowspan="2" class="yellowBorder"></td>
+    	<td class="w2"><h1 class="heading">AgriIoT</h1></td>
+        <td class="textAlignRight">
+        	<ul class="menu">
+            	<li><a href="#">Home</a></li>
+            	<li><a href="#">Products</a></li>
+            	<li><a href="#">Services</a></li>
+            	<li><a href="#">About Us</a></li>
+            	<li><a href="#">Login</a></li>
+            	<li><a href="#">SignUp</a></li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+    	<td colspan="2" align="center">
+            <iframe id="ifr" class="w95 hf" style="border:none;" src="Login/index.html"></iframe>
+        </td>
+    </tr>
+</table>
+<script src="js/all.js"></script>
+<script>
+
+    var userRole = '';
+
+    $(document).ready(function(){
+      $(".menu a").click(function(link){
+          var folder = link.target.innerText.split(" ").join("");
+          
+          //if(folder == "SignUp"){
+          //  $("#ifr").attr("src",folder+"/farmer.html");
+          //  return;
+          //}
+
+            console.log(folder)
+
+          if(folder.endsWith("Dashboard")){
+              console.log(folder+" ends with dashboard | "+userRole);
+              if(userRole == 'farmer'){
+                  $("#ifr").attr("src","/User/Farmer/Dashboard.html");
+              }
+              if(userRole == 'machinecontroller'){
+                  $("#ifr").attr("src","/User/MachineController/Dashboard.html");
+              }
+              if(userRole == 'servicecarrierstaff'){
+                  $("#ifr").attr("src","/User/ServiceCarrierStaff/Dashboard.html");
+              }
+              return;
+          }
+          
+          $("#ifr").attr("src",folder+"/index.html");
+      });
+    });
+    
+    msgListen = function(data){
+        console.log(data);
+        data = JSON.parse(data);
+        console.log(data);
+        data = data.data;
+        console.log(data);
+        try{
+            if(data.user === true){
+                userRole = data["userDetails"]["userRole"];
+                $(".menu a:eq(4)").html(data["userDetails"]["userName"]+"'s Dashboard");
+                $(".menu a:eq(5)").html("Logout");
+                
+            }else{
+                
+                $(".menu a:eq(4)").html("Login");
+                $(".menu a:eq(5)").html("SignUp");
+                clearAll();
+
+            }
+        }catch(e){
+                $(".menu a:eq(4)").html("Login");
+                $(".menu a:eq(5)").html("SignUp");
+                clearAll();
+        }
+    };
+
+    function clearAll(){
+        var keys = Object.keys(localStorage);
+        console.log(keys);
+        keys.forEach((key) => (localStorage.removeItem(key)));
+    }
+    
+</script>
+    
+</body>
+</html>

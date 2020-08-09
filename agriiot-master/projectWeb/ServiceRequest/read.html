@@ -1,0 +1,193 @@
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Cinzel|Play&display=swap" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <link href="../css/form.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+      <style>
+         body{background-image:url(https://drive.google.com/uc?export=download&id=19AfvU5NCtSvDros49Jx8V4SyJeJ0_mi-);
+             background-size:cover;
+             background-position:center;
+          }
+          .formEle input,.formEle select{
+              width:200px;
+              display: inline-block;
+          }
+          .formDiv table{
+              width: 100%;
+              margin: 10px 0px;
+          }
+      </style>
+   </head>
+   <body>
+       
+              
+      <table style="height:100%;width:100%;">
+         <tbody>
+            <tr>
+               <td valign="middle">
+                  <div class="formDiv" style="margin-left: 100px;">
+                    <h2 class="heading" style="
+                                margin: 0;
+                                text-align: center;
+                                display: block;
+                            ">Service Request Create</h2>
+                      <form action="#" method="POST" onsubmit="event.preventDefault(); validateMyForm();">
+                            
+                          <div id="formElements">
+                            <table>
+                                <thead>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                          </div>
+                          <br>
+                            <table border="1" id="bill" class="hide0">
+                                <tr>
+                                    <th colspan="2">Bill</th>
+                                </tr>
+                                <tr>
+                                    <th>One-Time Installation</th><td>$50</td>
+                                </tr>
+                                <tr>    
+                                    <th>Pay-as-you-go<br>(per device per day)</th><td>$2</td>
+                                </tr>  
+                                <tr>    
+                                    <th>Service Tax</th><td>$7.5</td>
+                                </tr>  
+                            </table>
+                          <br>
+                            <table border="1" id="contract" class="hide0">
+                                <tr>
+                                    <th colspan="2">Contract</th>
+                                </tr>
+                                <tr>
+                                    <th>Contract Start Time</th><td>11/19/2019</td>
+                                </tr>
+                                <tr>
+                                    <th>Contract End Time</th><td>11/19/2020</td>
+                                </tr>
+                                <tr>    
+                                    <th>Pay-as-you-go<br>(per device per day)</th><td>$2</td>
+                                </tr>  
+                            </table>
+                          <br>
+                            <table border="1" id="payment" class="hide0 hide1">
+                                <tr>
+                                    <th colspan="2">Payment</th>
+                                </tr>
+                                <tr>
+                                    <th>Payment Amount</th><td>$57.5</td>
+                                </tr>
+                                <tr>
+                                    <th>Payment Time</th><td id="ptime"></td>
+                                </tr>  
+                            </table>
+                            <br><br>
+                            
+                            <button name="submit" value="yes" id="submit_button" >Create Service Request</button>
+
+                        </form>
+                  </div>
+               </td>
+            </tr>
+         </tbody>
+      </table>
+       <script src="../js/all.js"></script>
+        <script>
+            var formEle = "<br><div class='formEle'>" + $(".formEle").eq(0).html() + "</div>";
+            
+            $("#ptime").html(
+                localStorage.getItem("ptime") || new Date().toDateString()
+            );
+            
+            function formEleA(){
+                $("#formElements").append(formEle);
+            }
+            
+            
+            //var testWrong = false;
+            
+            //if(testWrong){
+            
+                var sr = localStorage.getItem("sr") || -1;
+
+                if(sr == -1){
+                    window.location = "../index.html";
+                }
+
+                var user = localStorage.getItem("user") || "none";
+
+                if(user == "none"){
+                    window.location = "../index.html";
+                }
+            
+            //}
+            
+            
+            //alert("user:"+user+"\nsr:"+sr);
+            
+            $("#submit_button").click(function(link){
+                var operation = $("#submit_button").html();
+                if(operation == "Create Contract and Billing"){
+                    var w = 850;
+                    var h = 600;
+                    //alert(screen.width);
+                    var left = (screen.width/2)-(w/2);
+
+                    var top = (screen.height/2)-(h/2);
+                    var newwindow = window.open("../Billing/create.html","Create Bill",'toolbar=no, location=no, directories=no, status=no, menubar=no, resizable=no, copyhistory=no,height='+h+',width='+w+',top='+top+', left='+left);
+                    if (window.focus) {newwindow.focus();}
+                    var done = false;
+                    setInterval(function(){
+                        if(newwindow.closed && done == false){
+                            updateSRState();
+                            done = true;
+                        }
+                    },100);
+                    
+                }else if(operation == "Accept Contract and Pay"){
+                        updateSRState();
+                }else if(operation == "Install Devices"){
+                        updateSRState();
+                }
+            });
+            
+            if(sr == 0){
+                $(".hide0").hide();
+                if(user == "scs"){
+                    $("#submit_button").html("Create Contract and Billing");
+                }else{
+                    $("#submit_button").hide();
+                }
+            }else if(sr == 1){
+                $(".hide1").hide();
+                if(user == "f"){
+                    $("#submit_button").html("Accept Contract and Pay");
+                }else{
+                    $("#submit_button").hide();
+                }
+            }else if(sr == 2){
+                if(user == "mc"){
+                    $("#submit_button").html("Install Devices");
+                }else{
+                    $("#submit_button").hide();
+                }
+            }else if(sr == 3){
+                $("#submit_button").html("Done");
+            }
+            
+          function updateSRState(){
+              localStorage.setItem("sr",parseInt(sr)+1);
+              window.history.back();
+          }
+            
+                msgListen = function(data){
+                    console.log(data);
+                    updateSRState();
+                };
+            
+        </script>
+   </body>
+</html>

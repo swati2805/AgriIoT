@@ -1,0 +1,132 @@
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Cinzel|Play&display=swap" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <link href="../css/form.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+      <style>
+         body{background-image:url(https://drive.google.com/uc?export=download&id=19AfvU5NCtSvDros49Jx8V4SyJeJ0_mi-);
+             background-size:cover;
+             background-position:center;
+          }
+          .formEle input,.formEle select{
+              width:200px;
+              display: inline-block;
+          }
+      </style>
+   </head>
+   <body>
+       
+              
+      <table style="height:100%;width:100%;">
+         <tbody>
+            <tr>
+               <td valign="middle">
+                  <div class="formDiv" style="margin-left: 100px;">
+                    <h2 class="heading" style="
+                                margin: 0;
+                                text-align: center;
+                                display: block;
+                            ">Service Request Subscribe</h2>
+                      <form id="myForm" action="#" method="POST" onsubmit="event.preventDefault(); validateMyForm();">
+                            
+                          <div id="formElements">
+                            <div class="formEle">
+                                <select class="ThingType" >
+                                    <optgroup label="Sensor">
+                                        <option value="s0">Soil Moisture</option>
+                                        <option value="s1">Temperature</option>
+                                        <option value="s2">Fire Alert</option>
+                                        <option value="s3">Sun Light</option>
+                                        <option value="s4">pH Sensor</option>
+                                        <option value="s5">Location</option>
+                                    </optgroup>
+                                    <optgroup label="Actuator">
+                                        <option value="a0">Water Dispenser</option>
+                                        <option value="a1">Temperature Control</option>
+                                        <option value="a2">Greenhouse roof</option>
+                                        <option value="a3">Fertilizer Dispenser</option>
+                                        <option value="a4">Drone Camera</option>
+                                    </optgroup>
+                                </select>
+                                <input class="ThingQuantity" placeholder="ThingQuantity" >
+                            </div>
+                          </div>
+
+                          <br>
+                          <br>
+                          <a href="javascript:(function(){formEleA();})()">Add Thing Type</a>
+
+                            <br><br>
+                            
+                            <button name="submit" value="yes" id="submit_button">Create Service Request</button>
+
+                        </form>
+                  </div>
+               </td>
+            </tr>
+         </tbody>
+      </table>
+       <script src="../js/all.js"></script>
+        <script>
+            var formEle = "<br><div class='formEle'>" + $(".formEle").eq(0).html() + "</div>";
+            
+            function formEleA(){
+                $("#formElements").append(formEle);
+            }
+
+            $("#submit_button").click(function(link){
+                submitForm();
+            });
+            
+            function getThingType(val){
+                if(val.startsWith('a'))
+                return "Actuator";
+                return "Sensor";
+            }
+
+            function getThingSubType(val){
+                var vals ;
+                if(val.startsWith('a')){
+                     vals = ['Water Dispenser','Temperature Control','Greenhouse roof','Fertilizer Dispenser','Drone Camera'];
+                }else{
+                     vals = ['Soil Moisture','Temperature','Fire Alert','Sun Light','pH Sensor','Location'];
+                }
+                return vals[parseInt(val.slice(-1))];
+            }
+
+            function getMyFormData(){
+                var ThingType = document.getElementsByClassName('ThingType');
+                var ThingQuantity = document.getElementsByClassName('ThingQuantity');
+                var res = [];
+                for(var i=0;i<ThingQuantity.length;i++){
+                    thingType = ThingType[i].value;
+                    thingQuantity = ThingQuantity[i].value;
+                    res.push(
+                        {   thingType:{
+                                thingMainType:getThingType(thingType),
+                                thingSubType:getThingSubType(thingType)
+                            },
+                            quantity:thingQuantity
+                        }
+                        );
+                }
+                console.log(JSON.stringify({requestDetails:{subscribe:res}}));
+                return JSON.parse(JSON.stringify({requestDetails:{subscribe:res}}));
+            }
+
+            function submitForm(){
+                var res = getMyFormData();
+                res['farmId'] = localStorage.getItem('farmId');
+                console.log(res);
+                $.post("/servicerequest/create/subscribe",res,function(data){
+                    if(data.success){
+                        window.location = "list.html";
+                    }else{
+                        alert("Please try again.");
+                    }
+                });
+            }
+        </script>
+   </body>
+</html>

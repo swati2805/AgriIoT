@@ -1,0 +1,57 @@
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Cinzel|Play&display=swap" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <link href="../css/form.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+      <style>
+         body{background-image:url(https://cdn-img.health.com/sites/default/files/styles/medium_16_9/public/1516658245/agriculture-lungs-gettyImages-543212762.jpg?itok=S5rZATig&1516658555);background-size:cover;background-position:center;}
+         
+      </style>
+   </head>
+   <body>
+       
+              
+      <table style="height:100%;width:100%;">
+         <tbody>
+            <tr>
+               <td valign="middle">
+                  <div class="formDiv" style="margin-left: 100px;">
+                    <h2 class="heading" style="
+                                            margin: 0;
+                                            text-align: center;
+                                            display: block;
+                                        ">Bill Creation</h2>
+                      <form id='myForm' action="#" method="POST" onsubmit="event.preventDefault(); validateMyForm();">
+                            <input name="charge" 
+                                    placeholder="Charge"><br>
+                            <input name="payAsYouGo"
+                                    placeholder="Pay-as-you-go"><br><br>
+                            <button name="submit" value="yes" id="submit_button">Create Bill and Contract</button><br><br>
+                        </form>
+                  </div>
+               </td>
+            </tr>
+         </tbody>
+      </table>
+       <script src="../js/all.js"></script>
+        <script>
+            $("#submit_button").click(function(link){
+                submitForm();
+            });
+
+            function submitForm(){
+               var bill = getFormData($("#myForm"));
+               bill['requestId'] = localStorage.getItem('srId');
+               bill['serviceTax'] = parseInt(bill['charge']) *0.09;
+                $.post("/bill/create",bill,function(data){
+                    if(data.success){
+                        window.close();
+                    }else{
+                        alert("Please try again.");
+                    }
+                });
+            }
+        </script>
+   </body>
+</html>

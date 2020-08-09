@@ -1,0 +1,80 @@
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Cinzel|Play&display=swap" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <link href="../css/form.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+      <style>
+         body{background-image:url(https://drive.google.com/uc?export=download&id=19AfvU5NCtSvDros49Jx8V4SyJeJ0_mi-);background-size:cover;background-position:center;}
+         
+      </style>
+   </head>
+   <body>
+       
+              
+      <table style="height:100%;width:100%;">
+         <tbody>
+            <tr>
+               <td valign="middle">
+                  <div class="formDiv" style="margin-left: 100px;">
+                    <h2 class="heading" style="
+    margin: 0;
+    text-align: center;
+    display: block;
+">Create Farm</h2>
+                      <form id="myForm" action="#" method="POST" onsubmit="event.preventDefault(); validateMyForm();">
+                            <input name="farmName" 
+                                    type="text"
+                                    placeholder="Farm Name"
+                                    required><br>
+                            <textarea name="farmAddress" placeholder="Address" required></textarea><br><br>
+                            <button onclick='pickLoc()' class='fullButton'>Pick Location</button><br><br>
+                            <input name='farmLoc[type]' value='Point' type='hidden'>
+                            <input name='farmLoc[coordinates][0]' id="lat" value='0.0' type='hidden'>
+                            <input name='farmLoc[coordinates][1]' id="lng" value='0.0' type='hidden'>
+
+                            <button name="submit" value="yes" id="submit_button">Create Farm</button><br><br>
+
+                        </form>
+                  </div>
+               </td>
+            </tr>
+         </tbody>
+      </table>
+       <script src="../js/all.js"></script>
+        <script>
+            $("#submit_button").click(function(link){
+                submitForm();
+            });
+            function submitForm(){
+                alert(JSON.stringify(getFormData($("#myForm"))));
+                $.post("/farm/create",getFormData($("#myForm")),function(data){
+                    if(data.success){
+                        window.location = "../User/Farmer/Dashboard.html";
+                    }else{
+                        alert("Please try again.");
+                    }
+                });
+            }
+
+            function pickLoc(){
+            popitup('../locationPicker.html','Location Picker');
+            }
+
+            function popitup(url,windowName) {
+            var newwindow = window.open(url,windowName,'height=600,width=850');
+            if (window.focus) {newwindow.focus();}
+            return false;
+            }
+
+            function HandlePopupResult(result) {
+            result = JSON.parse(JSON.stringify(result));
+            console.log(result);
+            
+                document.forms['myForm'].elements["farmLoc[coordinates][0]"].value = result.lat ;
+                document.forms['myForm'].elements["farmLoc[coordinates][1]"].value = result.lng ;
+
+            }
+        </script>
+   </body>
+</html>

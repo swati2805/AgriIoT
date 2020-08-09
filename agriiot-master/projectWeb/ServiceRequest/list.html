@@ -1,0 +1,156 @@
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Cinzel|Play&display=swap" rel="stylesheet">
+    <link href="../../css/main.css" rel="stylesheet">
+    <link href="../../css/form.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+      <style>
+         body{background-image:url(https://cdn-img.health.com/sites/default/files/styles/medium_16_9/public/1516658245/agriculture-lungs-gettyImages-543212762.jpg?itok=S5rZATig&1516658555);background-size:cover;background-position:center;}
+         
+          .dp{
+              width: 200px;
+              height:200px;
+              object-fit: cover;
+              border-radius: 50%;
+          }
+          
+          .farmList{
+              font-size: 14pt;
+          }
+          
+          .farmList thead{
+              text-decoration: underline;
+              font-size: 16pt;
+          }
+          
+          
+          .farmList tbody{
+              font-size: 14pt;
+          }
+          
+          .farmList th{
+              text-align: left;
+          }
+          
+          .farmList td,th{
+              padding:10px;
+    max-width: 200px;
+          }
+          
+          .farmList tbody tr:hover{
+              text-decoration: underline;
+          }
+          
+          .farmList td:last-child{
+              max-width:200px;
+          }
+          
+          h2{
+              
+              
+            color: #E5A635;
+            font-family: 'Cinzel', serif;
+            font-size: 20pt;
+            margin:0;
+          }
+          
+      </style>
+   </head>
+   <body>
+       
+              
+      <table style="height:100%;width:100%;">
+         <tbody>
+            <tr>
+               <td align="center" valign="middle">
+                  <div class="formDiv">
+                      <h1 class="heading">Welcome to AgriIot</h1>
+                        <img class="dp" src="https://www.fairchildgarden.org/portals/0/images/Fruit%20Program/expeditions/mikasaki_grower.jpg">
+                      <br>
+                      <br>
+                      <div style="background-color: rgba(255,255,255,0.4);">
+                      
+                      <table style='width:100%;padding:15px;'>
+                        <tr valign='middle'>
+                            <td ><h2>Here are your Service Requests</h2></td>
+                            <td align='right'>
+                            <img src="https://images.vexels.com/media/users/3/139161/isolated/preview/c76ee72de9a5b980c5f0e0d6b7bac0e0-cross-plus-add-by-vexels.png" style="
+                                                                width: 35px;
+                                                                height: 35px;
+                                                                
+                                                                " class="farmerOnly" onclick="addSR()">
+                            </td>
+                        </tr>
+                      </table>
+                      <table class="farmList">
+                        <thead>
+                            <tr>
+                                <th>Farm Id</th>
+                                <th>SR Id</th>
+                                <th>SR Type</th>
+                                <th>SR Status</th>
+                            </tr>  
+                        </thead>
+                        <tbody class="farmsList">
+                            
+                        </tbody>  
+                        
+                      </table>
+                        </div>
+                  </div>
+               </td>
+            </tr>
+         </tbody>
+      </table>
+       <script src="../../js/all.js"></script>
+      <script>
+      console.log('whoami calling');
+      /*
+      $.get("/whoami",function(data){
+            console.log(data);
+            if(data.user === true){
+                
+                sendMsgToParent({userState:'changed','data':data});
+                
+                $.get("/farm/list",function(data){
+                    console.log(data);
+                    loadFarms(data);
+                });
+
+            }else{
+                alert("Login First");
+                window.location = "../../Login/index.html";
+
+            }
+        }).fail(function(err) {
+            console.log(err);
+        });
+        */
+          
+        
+            var farmId = localStorage.getItem('farmId');
+
+            $.get("/servicerequest/list?farmId="+farmId,function(data){
+                console.log(data);
+                loadFarms(data);
+            });
+
+            function loadFarms(data){
+                console.log(data);
+                data['servicerequestlist'].forEach(function(sr){
+                    $(".farmsList").append("<tr data-id='"+sr.requestId+"'><td>"+sr.farmId+"</td><td>"+sr.requestId+"</td><td>"+sr.requestType+"</td><td>"+sr.requestStatus+"</td></tr>");
+                });
+                $(".farmsList tr").click(function(link){
+                    console.log(link.target.parentElement.getAttribute('data-id'));
+                    localStorage.setItem("srId",link.target.parentElement.getAttribute('data-id'));
+                    window.location = "view.html";
+                });
+            }
+
+            function addSR(){
+                    window.location = "subscribe.html";
+            }
+
+        </script>
+   </body>
+</html>

@@ -1,0 +1,90 @@
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Cinzel|Play&display=swap" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <link href="../css/form.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+      <style>
+         body{background-image:url(https://cdn-img.health.com/sites/default/files/styles/medium_16_9/public/1516658245/agriculture-lungs-gettyImages-543212762.jpg?itok=S5rZATig&1516658555);background-size:cover;background-position:center;}
+         
+      </style>
+   </head>
+   <body>
+       
+              
+      <table style="height:100%;width:100%;">
+         <tbody>
+            <tr>
+               <td valign="middle">
+                  <div class="formDiv" style="margin-left: 100px;">
+                    <h2 class="heading" style="
+    margin: 0;
+    text-align: center;
+    display: block;
+">Service Carrier Staff Sign Up</h2>
+                      <form id="myForm" action="#" method="POST" onsubmit="event.preventDefault(); validateMyForm();">
+                            <input name="userEmail" 
+                                    type="email"
+                                    id="email"
+                                    placeholder="E-Mail"
+                                    required><br>
+                            <input name="userPassword"
+                                    type="password"
+                                    placeholder="Password"
+                                    required><br><br>
+                            <input name="verificationToken" id="verificationToken" type="hidden">        
+                            <input name="userName" 
+                                    type="text"
+                                    placeholder="Name"
+                                    required><br>
+                            <input name="userPhoneNumber" 
+                                    type="phone"
+                                    placeholder="Phone Number"
+                                    required><br><br>
+                            <input name="userRole" type="hidden" value="servicecarrierstaff">
+                            <textarea name="userAddress" placeholder="Address" required></textarea><br><br>
+
+                            <button name="submit" value="yes" id="submit_button">Register</button><br><br>
+
+                            <a href="../Login/servicecarrierstaff.html">Returning User? Go To Login</a>
+
+                        </form>
+                  </div>
+               </td>
+            </tr>
+         </tbody>
+      </table>
+       <script src="../js/all.js"></script>
+        <script>
+            $("#submit_button").click(function(link){
+                sendVerificationToken();
+            });
+            function sendVerificationToken(){
+                $.post( "/user/sendVerificationToken", {email : $("#email").val()} , function( data ) {
+                    if(data.success){
+                        askVerificationToken();
+                    }else{
+
+                    }
+                });
+            }
+            function askVerificationToken(){
+                var person = prompt("A Verification Token has been sent to your email address. Please provide us the Verification Token.", "");
+
+                if (person != null) {
+                    $("#verificationToken").val(person);
+                    submitForm();
+                }
+            }
+            function submitForm(){
+                $.post("/user/register",getFormData($("#myForm")),function(data){
+                    if(data.success){
+                        window.location = "../User/ServiceCarrierStaff/Dashboard.html";
+                    }else{
+                        alert("Please try again.");
+                    }
+                });
+            }
+        </script>
+   </body>
+</html>

@@ -1,0 +1,19 @@
+module.exports = function(app,collections){
+    app.get('/thing/read',function(req,res){
+        if(req.query.thingId){
+            collections['things'].findOne({thingId:req.query.thingId},function(err,thing){
+                if(err){
+                    res.json({success:false});
+                    return;
+                }
+                if(thing){
+                    res.json({success:true,data:thing});
+                }else{
+                    res.json({success:false});
+                }
+            });
+        }else{
+            res.json({success:false});
+        }
+    });
+}

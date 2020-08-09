@@ -1,0 +1,19 @@
+module.exports = function(app,collections){
+    app.get('/farm/read',function(req,res){
+        if(req.query.farmId){
+            collections['farms'].findOne({farmId:req.query.farmId},function(err,farm){
+                if(err){
+                    res.json({success:false});
+                    return;
+                }
+                if(farm){
+                    res.json({success:true,data:farm});
+                }else{
+                    res.json({success:false});
+                }
+            });
+        }else{
+            res.json({success:false});
+        }
+    });
+}

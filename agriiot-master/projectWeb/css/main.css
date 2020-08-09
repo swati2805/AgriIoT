@@ -1,0 +1,49 @@
+.wf{
+width:100%;
+}
+.w75{
+width:75%;
+}
+.w95{
+width:95%;
+}
+.hf{
+height:100%;
+}
+.w2{
+width:20vw;
+}
+.h1{
+height:10vh;
+}
+.heading{
+	color:#136ea3;
+	font-family: 'Cinzel', serif;
+	padding: 10;
+    display: table-cell;
+    vertical-align: middle;
+}
+.textAlignRight{
+	text-align:right;
+}
+.centerPiece{
+	background-color:white;
+    margin-left: auto;
+    margin-right: auto;
+    min-width:1100px;
+}
+.yellowBorder{
+min-width: 21px;
+background: url(http://www.sjsu.edu/sjsuhome/assets/images/bg-left-sjsu-02.png) top left no-repeat #fff;
+}
+.menu{
+	font-family: 'Play', sans-serif;
+	display:inline-flex;
+    list-style:none;
+}
+.menu li{
+	margin:15px;
+}
+.menu a{
+	color:#136ea3;
+}

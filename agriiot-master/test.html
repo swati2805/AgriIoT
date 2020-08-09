@@ -1,0 +1,16 @@
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    </head>
+    <body>
+        <ul id="messages">
+        </ul>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+          var socket = io();
+            socket.on('some event', function(msg){
+              $('#messages').append($('<li>').text(JSON.stringify(msg)));
+            });
+        </script>
+    </body>
+</html>

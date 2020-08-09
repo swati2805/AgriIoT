@@ -1,0 +1,69 @@
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Cinzel|Play&display=swap" rel="stylesheet">
+    <link href="../css/main.css" rel="stylesheet">
+    <link href="../css/form.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+      <style>
+         body{background-image:url(https://cdn-img.health.com/sites/default/files/styles/medium_16_9/public/1516658245/agriculture-lungs-gettyImages-543212762.jpg?itok=S5rZATig&1516658555);background-size:cover;background-position:center;}
+          .icon{
+              width:300px;
+                height: 200px;
+                object-fit: cover;
+          }
+          .heading{
+            margin: 0;
+            text-align: center;
+            display: block;
+            padding-top: 10;
+            padding-bottom: 0;  
+          }
+          
+          .formDiv{
+                margin: 35px 50px;
+                box-shadow: 0px 0px 15px #000;
+              transition: 0.4s;
+          }
+          
+          .formDiv:hover{
+              background-color: #136ea3;
+          }
+          .formDiv:hover .heading{
+              color:white;
+          }
+      </style>
+   </head>
+   <body>
+       
+              
+      <table style="height:100%;width:100%;">
+         <tbody>
+            <tr valign="middle">
+               <td align="center">
+                  <div class="formDiv" onclick="goTo('farmer.html')">
+                    <img src="https://drive.google.com/uc?export=download&id=19AfvU5NCtSvDros49Jx8V4SyJeJ0_mi-" class="icon">
+                    <h3 class="heading" >Farmer</h3>           
+                  </div>
+                   <div class="formDiv" onclick="goTo('machinecontroller.html')">
+                    <img src="https://drive.google.com/uc?export=download&id=1i9itgKQ4uGJph4M-apbubf_zrgzMyF02" class="icon">
+                    <h3 class="heading" >Machine Controller</h3>           
+                  </div>
+                   <div class="formDiv" onclick="goTo('servicecarrierstaff.html')">
+                    <img src="https://drive.google.com/uc?export=download&id=1GvLkdyS02dXhD-nRC3wYFTm7BpZDW2gh" class="icon">
+                    <h3 class="heading" >Service Carrier Staff</h3>           
+                  </div>
+               </td>
+            </tr>
+         </tbody>
+      </table>
+       <script src="../js/all.js"></script>
+        <script>
+            $("#submit_button").click(function(link){
+                window.location = "../User/Farmer/Dashboard.html";
+            });
+            function goTo(link){
+                window.location = link;
+            }
+        </script>
+   </body>
+</html>
